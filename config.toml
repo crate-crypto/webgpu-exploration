@@ -1,0 +1,10 @@
+# workgroup size
+x = 16
+y = 1
+z = 1
+
+# bindgroup index
+index = 0
+
+# bindgroup layout
+layout = 0
