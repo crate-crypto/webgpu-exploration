@@ -1,6 +1,6 @@
 @compute
-@workgroup_size(1)
-fn processSignedDigitsKernel_call() {
+@workgroup_size(256)
+fn processSignedDigitsKernel_call(@builtin(global_invocation_id) global_id: vec3u) {
   var thread = Thread(
     vec2<u32>(1u, 2u),
     vec2<u32>(1u, 2u),
@@ -23,7 +23,7 @@ fn processSignedDigitsKernel_call() {
     v_indices[25], v_indices[26], v_indices[27]
   );
 
-  processSignedDigitsKernel(processedScalarData, &scalarData, v_indices[28], thread);
+  processSignedDigitsKernel(processedScalarData, &scalarData, v_indices[28], thread, global_id);
 
   for(var i = 0;i<300; i++)
   {
@@ -33,7 +33,7 @@ fn processSignedDigitsKernel_call() {
 
 @compute
 @workgroup_size(1)
-fn initializeCountersSizesAtomicsHistogramKernel_call() {
+fn initializeCountersSizesAtomicsHistogramKernel_call(@builtin(global_invocation_id) global_id: vec3u) {
   var wn1 = WideNumber(v_indices[4], v_indices[5]);
   var wn2 = WideNumber(v_indices[6], v_indices[7]);
   var wn3 = WideNumber(v_indices[8], v_indices[9]);
@@ -74,7 +74,7 @@ fn initializeCountersSizesAtomicsHistogramKernel_call() {
     v_indices[3],
   );
 
-  initializeCountersSizesAtomicsHistogramKernel(&countersPtr, &sizesPtr, &atomicsPtr, &histogramPtr, thread);
+  initializeCountersSizesAtomicsHistogramKernel(&countersPtr, &sizesPtr, &atomicsPtr, &histogramPtr, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = countersPtr[i].first;
@@ -87,7 +87,7 @@ fn initializeCountersSizesAtomicsHistogramKernel_call() {
 
 @compute
 @workgroup_size(1)
-fn partition1024Kernel_call() {
+fn partition1024Kernel_call(@builtin(global_invocation_id) global_id: vec3u) {
   var pagesPtr = array<u32, limbs> (
     v_indices[4], v_indices[5], v_indices[6], v_indices[7], 
     v_indices[8], v_indices[9], v_indices[10], v_indices[11],
@@ -133,7 +133,7 @@ fn partition1024Kernel_call() {
     v_indices[3],
   );
 
-  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, points, thread);
+  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, points, thread, global_id);
 
   for(var i = 0; i < 300; i++) {
     v_indices[i] = memory.data[i];
@@ -141,8 +141,8 @@ fn partition1024Kernel_call() {
 }
 
 @compute
-@workgroup_size(1)
-fn sizesPrefixSumKernel_call() {
+@workgroup_size(8)
+fn sizesPrefixSumKernel_call(@builtin(global_invocation_id) global_id: vec3u) {
   var pagesPtr = array<u32, limbs> (
     v_indices[4], v_indices[5], v_indices[6], v_indices[7], 
     v_indices[8], v_indices[9], v_indices[10], v_indices[11],
@@ -192,7 +192,7 @@ fn sizesPrefixSumKernel_call() {
     v_indices[3],
   );
 
-  sizesPrefixSumKernel(pagesPtr, &prefixSumSizesPtr, &sizesPtr, countersPtr, atomicsPtr, thread);
+  sizesPrefixSumKernel(pagesPtr, &prefixSumSizesPtr, &sizesPtr, countersPtr, atomicsPtr, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = prefixSumSizesPtr[i];
@@ -204,8 +204,8 @@ fn sizesPrefixSumKernel_call() {
 }
 
 @compute
-@workgroup_size(1)
-fn partition4096Kernel_call() {
+@workgroup_size(8)
+fn partition4096Kernel_call(@builtin(global_invocation_id) global_id: vec3u) {
   var pointsPtr = array<u32, limbs> (
     v_indices[4], v_indices[5], v_indices[6], v_indices[7], 
     v_indices[8], v_indices[9], v_indices[10], v_indices[11],
@@ -267,7 +267,7 @@ fn partition4096Kernel_call() {
     v_indices[3],
   );
 
-  partition4096Kernel(&pointsPtr, unsortedTriplePtr, &scratchPtr, prefixSumSizesPtr, sizesPtr, pagesPtr, atomicsPtr, points, thread);
+  partition4096Kernel(&pointsPtr, unsortedTriplePtr, &scratchPtr, prefixSumSizesPtr, sizesPtr, pagesPtr, atomicsPtr, points, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = pointsPtr[i];
@@ -280,8 +280,8 @@ fn partition4096Kernel_call() {
 }
 
 @compute
-@workgroup_size(1)
-fn histogramPrefixSumKernel_call() {
+@workgroup_size(8)
+fn histogramPrefixSumKernel_call(@builtin(global_invocation_id) global_id: vec3u) {
   var histogramPtr = array<u32, limbs> (
     v_indices[4], v_indices[5], v_indices[6], v_indices[7], 
     v_indices[8], v_indices[9], v_indices[10], v_indices[11],
@@ -302,7 +302,7 @@ fn histogramPrefixSumKernel_call() {
     v_indices[3],
   );
 
-  histogramPrefixSumKernel(&histogramPtr, unsortedTriplePtr, thread);
+  histogramPrefixSumKernel(&histogramPtr, unsortedTriplePtr, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = histogramPtr[i];
@@ -310,8 +310,8 @@ fn histogramPrefixSumKernel_call() {
 }
 
 @compute
-@workgroup_size(1)
-fn sortCountsKernel_call() {
+@workgroup_size(8)
+fn sortCountsKernel_call(@builtin(global_invocation_id) global_id: vec3u) {
   var sortedTriplePtr = array<u32, limbs> (
     v_indices[4], v_indices[5], v_indices[6], v_indices[7], 
     v_indices[8], v_indices[9], v_indices[10], v_indices[11],
@@ -338,7 +338,7 @@ fn sortCountsKernel_call() {
     v_indices[3],
   );
 
-  sortCountsKernel(&sortedTriplePtr, histogramPtr, unsortedTriplePtr, thread);
+  sortCountsKernel(&sortedTriplePtr, histogramPtr, unsortedTriplePtr, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = sortedTriplePtr[i];
@@ -350,8 +350,8 @@ fn sortCountsKernel_call() {
 }
 
 @compute
-@workgroup_size(1)
-fn computeBucketSums_call() {
+@workgroup_size(8)
+fn computeBucketSums_call(@builtin(global_invocation_id) global_id: vec3u) {
   var bucketsPtr = array<vec4<u32>, 12> (
     vec4<u32>(v_indices[4], v_indices[5], v_indices[6], v_indices[7]),
     vec4<u32>(v_indices[8], v_indices[9], v_indices[10], v_indices[11]),
@@ -399,7 +399,7 @@ fn computeBucketSums_call() {
     v_indices[3],
   );
 
-  computeBucketSums(&bucketsPtr, pointsPtr, sortedTriplePtr, pointIndexesPtr, atomicsPtr, thread);
+  computeBucketSums(&bucketsPtr, pointsPtr, sortedTriplePtr, pointIndexesPtr, atomicsPtr, thread, global_id);
 
   var j = 0;
   for(var i = 0; i<12; i++) {

@@ -59,9 +59,9 @@ fn ballot_sync(mask: u32, predicate: bool) -> u32 { // +
   return (mask & predicate_mask);
 }
 
-fn processSignedDigitsKernel(processedScalarData: array<u32, limbs>, scalarData: ptr<function, array<u32, limbs>>, points: u32, thread: Thread) { // +
-  var warpThread = thread.threadIdx.x & 0x1Fu;
-  var warp = thread.threadIdx.x>>5u;
+fn processSignedDigitsKernel(processedScalarData: array<u32, limbs>, scalarData: ptr<function, array<u32, limbs>>, points: u32, thread: Thread, global_id: vec3u) { // +
+  var warpThread = global_id.x & 0x1Fu;
+  var warp = global_id.x>>5u;
 
   var current: u32 = 0u;
   var distributed: u32 = 0u;

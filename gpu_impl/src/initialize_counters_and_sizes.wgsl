@@ -1,5 +1,5 @@
-fn initializeCountersSizesAtomicsHistogramKernel(countersPtr: ptr<function, array<WideNumber, limbs>>, sizesPtr: ptr<function, array<u32, limbs>>, atomicsPtr: ptr<function, array<u32, limbs>>, histogramPtr: ptr<function, array<u32, limbs>>, thread: Thread) { // +
-  var globalTID = thread.blockIdx.x*thread.blockDim.x+thread.threadIdx.x;
+fn initializeCountersSizesAtomicsHistogramKernel(countersPtr: ptr<function, array<WideNumber, limbs>>, sizesPtr: ptr<function, array<u32, limbs>>, atomicsPtr: ptr<function, array<u32, limbs>>, histogramPtr: ptr<function, array<u32, limbs>>, thread: Thread, global_id: vec3u) { // +
+  var globalTID = global_id.x*thread.blockDim.x+thread.threadIdx.x;
   var globalStride = thread.blockDim.x*thread.gridDim.x;
 
   // var counters = countersPtr;
@@ -39,7 +39,7 @@ fn initializeCountersSizesAtomicsHistogramKernel(countersPtr: ptr<function, arra
   }
 }
 
-fn sizesPrefixSumKernel(pagesPtr: array<u32, limbs>, prefixSumSizesPtr: ptr<function, array<u32, limbs>>, sizesPtr: ptr<function, array<u32, limbs>>, countersPtr: array<WideNumber, limbs>, atomicsPtr: array<u32, limbs>, thread: Thread) { // +
+fn sizesPrefixSumKernel(pagesPtr: array<u32, limbs>, prefixSumSizesPtr: ptr<function, array<u32, limbs>>, sizesPtr: ptr<function, array<u32, limbs>>, countersPtr: array<WideNumber, limbs>, atomicsPtr: array<u32, limbs>, thread: Thread, global_id: vec3u) { // +
   var globalTID = thread.blockIdx.x*thread.blockDim.x + thread.threadIdx.x;
   
   // var prefixSumSizes = prefixSumSizesPtr;

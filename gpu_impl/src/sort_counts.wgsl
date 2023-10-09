@@ -1,4 +1,4 @@
-fn histogramPrefixSumKernel(histogramPtr: ptr<function, array<u32, limbs>>, unsortedTriplePtr: array<u32, limbs>, thread: Thread) { // +
+fn histogramPrefixSumKernel(histogramPtr: ptr<function, array<u32, limbs>>, unsortedTriplePtr: array<u32, limbs>, thread: Thread, global_id: vec3u) { // +
   var globalTID = thread.blockIdx.x*thread.blockDim.x+thread.threadIdx.x;
   var globalStride = thread.gridDim.x*thread.blockDim.x;
 
@@ -57,8 +57,8 @@ fn histogramPrefixSumKernel(histogramPtr: ptr<function, array<u32, limbs>>, unso
   }
 }
 
-fn sortCountsKernel(sortedTriplePtr: ptr<function, array<u32, limbs>>, histogramPtr: array<u32, limbs>, unsortedTriplePtr: array<u32, limbs>, thread: Thread) {
-  var globalTID = thread.blockIdx.x*thread.blockDim.x+thread.threadIdx.x;
+fn sortCountsKernel(sortedTriplePtr: ptr<function, array<u32, limbs>>, histogramPtr: array<u32, limbs>, unsortedTriplePtr: array<u32, limbs>, thread: Thread, global_id: vec3u) {
+  var globalTID = global_id.x*thread.blockDim.x+thread.threadIdx.x;
   var globalStride = thread.gridDim.x*thread.blockDim.x;
 
   var warp = thread.threadIdx.x>>5u;

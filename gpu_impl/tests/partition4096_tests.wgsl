@@ -260,8 +260,8 @@ fn partitionPagesToPoints_test() {
 }
 
 @compute
-@workgroup_size(1)
-fn partition4096Kernel_test() {
+@workgroup_size(8)
+fn partition4096Kernel_test(@builtin(global_invocation_id) global_id: vec3u) {
   var pointsPtr = array<u32, limbs>(1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u);
 
   var unsortedTriplePtr = array<vec4<u32>, limbs>(
@@ -289,7 +289,7 @@ fn partition4096Kernel_test() {
   );
 
   partition4096Kernel(&pointsPtr, unsortedTriplePtr, &scratchPtr, prefixSumSizesPtr,
-                      sizesPtr, pagesPtr, atomicsPtr, 12u, thread);
+                      sizesPtr, pagesPtr, atomicsPtr, 12u, thread, global_id);
 
   for(var i = 0; i<300; i++) {
     v_indices[i] = memory.data[i];

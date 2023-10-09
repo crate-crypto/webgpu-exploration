@@ -73,8 +73,8 @@ fn prefetch_test() {
 }
 
 @compute
-@workgroup_size(1)
-fn computeBucketSums_test() {
+@workgroup_size(8)
+fn computeBucketSums_test(@builtin(global_invocation_id) global_id: vec3u) {
   var bucketsPtr: array<vec4<u32>, 12>;
 
   var pointsPtr = array<u32, limbs>(1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u);
@@ -87,7 +87,7 @@ fn computeBucketSums_test() {
     1u,
   );
 
-  computeBucketSums(&bucketsPtr, pointsPtr, pointsPtr, pointsPtr, pointsPtr, thread);
+  computeBucketSums(&bucketsPtr, pointsPtr, pointsPtr, pointsPtr, pointsPtr, thread, global_id);
 
   var j = 0;
   for(var i = 0;i<12; i++)

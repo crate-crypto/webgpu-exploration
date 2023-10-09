@@ -130,8 +130,8 @@ fn processWrites_test() {
 }
 
 @compute
-@workgroup_size(1)
-fn partition1024Kernel_test() {
+@workgroup_size(8)
+fn partition1024Kernel_test(@builtin(global_invocation_id) global_id: vec3u) {
   var pagesPtr = array<u32, limbs>(
     0u, 1u, 2u , 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u
   );
@@ -161,7 +161,7 @@ fn partition1024Kernel_test() {
 
   var writeRequired = true;
   
-  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, 100u, thread);
+  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, 100u, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = countersPtr[i].first;
@@ -170,8 +170,8 @@ fn partition1024Kernel_test() {
 }
 
 @compute
-@workgroup_size(1)
-fn partition1024Kernel_call_test() {
+@workgroup_size(8)
+fn partition1024Kernel_call_test(@builtin(global_invocation_id) global_id: vec3u) {
   var pagesPtr = array<u32, limbs> (
     v_indices[4], v_indices[5], v_indices[6], v_indices[7], 
     v_indices[8], v_indices[9], v_indices[10], v_indices[11],
@@ -217,7 +217,7 @@ fn partition1024Kernel_call_test() {
     v_indices[3],
   );
 
-  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, points, thread);
+  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, points, thread, global_id);
 
   for(var i = 0; i < 300; i++) {
     v_indices[i] = memory.data[i];

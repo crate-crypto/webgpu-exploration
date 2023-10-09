@@ -1,6 +1,6 @@
 @compute
-@workgroup_size(1)
-fn initializeCountersSizesAtomicsHistogramKernel_test() {
+@workgroup_size(8)
+fn initializeCountersSizesAtomicsHistogramKernel_test(@builtin(global_invocation_id) global_id: vec3u) {
   var countersPtr: array<WideNumber, limbs>;
   var sizesPtr: array<u32, limbs>;
   var atomicsPtr: array<u32, limbs>;
@@ -14,7 +14,7 @@ fn initializeCountersSizesAtomicsHistogramKernel_test() {
     1u,
   );
 
-  initializeCountersSizesAtomicsHistogramKernel(&countersPtr, &sizesPtr, &atomicsPtr, &histogramPtr, thread);
+  initializeCountersSizesAtomicsHistogramKernel(&countersPtr, &sizesPtr, &atomicsPtr, &histogramPtr, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = countersPtr[i].first;
@@ -26,8 +26,8 @@ fn initializeCountersSizesAtomicsHistogramKernel_test() {
 }
 
 @compute
-@workgroup_size(1)
-fn sizesPrefixSumKernel_test() {
+@workgroup_size(8)
+fn sizesPrefixSumKernel_test(@builtin(global_invocation_id) global_id: vec3u) {
   var pagesPtr: array<u32, limbs>;
   var prefixSumSizesPtr: array<u32, limbs>;
   var sizesPtr: array<u32, limbs>;
@@ -45,7 +45,7 @@ fn sizesPrefixSumKernel_test() {
     1u,
   );
 
-  sizesPrefixSumKernel(pagesPtr, &prefixSumSizesPtr, &sizesPtr, countersPtr, atomicsPtr, thread);
+  sizesPrefixSumKernel(pagesPtr, &prefixSumSizesPtr, &sizesPtr, countersPtr, atomicsPtr, thread, global_id);
 
   for(var i = 0; i<12; i++) {
     v_indices[i] = prefixSumSizesPtr[i];

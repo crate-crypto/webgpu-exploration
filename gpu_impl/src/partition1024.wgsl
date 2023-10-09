@@ -204,7 +204,7 @@ fn processWrites(pagesPtr: array<u32, limbs>, sizesPtr: ptr<function, array<u32,
   }
 }
 
-fn partition1024Kernel(pagesPtr: array<u32, limbs>, sizesPtr: ptr<function, array<u32, limbs>>, countersPtr: ptr<function, array<WideNumber, limbs>>, processedScalarsPtr: array<u32, limbs>, points: u32, thread: Thread) {
+fn partition1024Kernel(pagesPtr: array<u32, limbs>, sizesPtr: ptr<function, array<u32, limbs>>, countersPtr: ptr<function, array<WideNumber, limbs>>, processedScalarsPtr: array<u32, limbs>, points: u32, thread: Thread, global_id: vec3u) {
   var warpThread: u32 = thread.threadIdx.x & 0x1Fu;
   var chunk: u32;
   var window: u32 = 0u;

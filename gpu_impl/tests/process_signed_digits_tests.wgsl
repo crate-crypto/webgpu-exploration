@@ -62,8 +62,8 @@ fn ballot_sync_test() {
 }
 
 @compute
-@workgroup_size(1)
-fn processSignedDigitsKernel_test() {
+@workgroup_size(256)
+fn processSignedDigitsKernel_test(@builtin(global_invocation_id) global_id: vec3u) {
   var processedScalarData = array<u32, limbs>(0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u);
   var scalarData = array<u32, limbs>(100u,100u,100u,100u,100u,100u,100u,100u,100u,100u,100u,100u);
 
@@ -75,7 +75,7 @@ fn processSignedDigitsKernel_test() {
     1u,
   );
 
-  processSignedDigitsKernel(processedScalarData, &scalarData, 100u, thread);
+  processSignedDigitsKernel(processedScalarData, &scalarData, 100u, thread, global_id);
 
   for(var i = 0;i<300; i++)
   {

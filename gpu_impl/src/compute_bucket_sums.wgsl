@@ -167,12 +167,12 @@ fn prefetch(storeOffset: ptr<function, u32>, pointIndex: u32, pointsPtr: array<u
   shared_async_copy_u4(*storeOffset+160u, p1[64u + oddEven*16u]);
 }
 
-fn computeBucketSums(bucketsPtr: ptr<function, array<vec4<u32>, 12>>, pointsPtr: array<u32, limbs>, sortedTriplePtr: array<u32, limbs>, pointIndexesPtr: array<u32, limbs>, atomicsPtr: array<u32, limbs>, thread: Thread) { // +
+fn computeBucketSums(bucketsPtr: ptr<function, array<vec4<u32>, 12>>, pointsPtr: array<u32, limbs>, sortedTriplePtr: array<u32, limbs>, pointIndexesPtr: array<u32, limbs>, atomicsPtr: array<u32, limbs>, thread: Thread, global_id: vec3u) { // +
   var acc: HighThroughput;
   var point: PointXY;
 
-  var warp = thread.threadIdx.x>>5u;
-  var warpThread = thread.threadIdx.x & 0x1Fu;
+  var warp = global_id.x>>5u;
+  var warpThread = global_id.x & 0x1Fu;
 
   var atomics: array<u32, limbs>;
   var atomicsPtr_copy = atomicsPtr;

@@ -6,8 +6,8 @@ const SIZE_LIMIT: u32 = 283840u; // (SCRATCH_MAX_COUNT-256)*32
 const SCRATCH_REQUIRED: u32 = 1460160u; // SCRATCH_MAX_COUNT*160
 
 @compute
-@workgroup_size(1)
-fn MSM_run_call() {
+@workgroup_size(8)
+fn MSM_run_call(@builtin(global_invocation_id) global_id: vec3u) {
   var thread = Thread(
     vec2<u32>(1u, 2u),
     vec2<u32>(1u, 2u),
@@ -30,7 +30,7 @@ fn MSM_run_call() {
     v_indices[25], v_indices[26], v_indices[27]
   );
 
-  processSignedDigitsKernel(processedScalarData, &scalarData, v_indices[28], thread);
+  processSignedDigitsKernel(processedScalarData, &scalarData, v_indices[28], thread, global_id);
 
   var wn1 = WideNumber(v_indices[29], v_indices[30]);
   var wn2 = WideNumber(v_indices[31], v_indices[32]);
@@ -64,7 +64,7 @@ fn MSM_run_call() {
     v_indices[85], v_indices[86], v_indices[87], v_indices[88], 
   );
 
-  initializeCountersSizesAtomicsHistogramKernel(&countersPtr, &sizesPtr, &atomicsPtr, &histogramPtr, thread);
+  initializeCountersSizesAtomicsHistogramKernel(&countersPtr, &sizesPtr, &atomicsPtr, &histogramPtr, thread, global_id);
 
   var pagesPtr = array<u32, limbs> (
     v_indices[89], v_indices[90], v_indices[91], v_indices[92], 
@@ -80,7 +80,7 @@ fn MSM_run_call() {
 
   var points = v_indices[113];
 
-  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, points, thread);
+  partition1024Kernel(pagesPtr, &sizesPtr, &countersPtr, processedScalarsPtr, points, thread, global_id);
 
   var prefixSumSizesPtr = array<u32, limbs> (
     v_indices[114], v_indices[115], v_indices[116], v_indices[117], 
@@ -88,7 +88,7 @@ fn MSM_run_call() {
     v_indices[122], v_indices[123], v_indices[124], v_indices[125]
   );
 
-  sizesPrefixSumKernel(pagesPtr, &prefixSumSizesPtr, &sizesPtr, countersPtr, atomicsPtr, thread);
+  sizesPrefixSumKernel(pagesPtr, &prefixSumSizesPtr, &sizesPtr, countersPtr, atomicsPtr, thread, global_id);
 
   var pointsPtr = array<u32, limbs> (
     v_indices[126], v_indices[127], v_indices[128], v_indices[129], 
@@ -117,7 +117,7 @@ fn MSM_run_call() {
     v_indices[194], v_indices[195], v_indices[196], v_indices[197]
   );
 
-  partition4096Kernel(&pointsPtr, unsortedTriplePtr, &scratchPtr, prefixSumSizesPtr, sizesPtr, pagesPtr, atomicsPtr, points, thread);
+  partition4096Kernel(&pointsPtr, unsortedTriplePtr, &scratchPtr, prefixSumSizesPtr, sizesPtr, pagesPtr, atomicsPtr, points, thread, global_id);
 
   var unsortedTriplePtr1 = array<u32, limbs> (
     v_indices[198], v_indices[199], v_indices[200], v_indices[201], 
@@ -125,7 +125,7 @@ fn MSM_run_call() {
     v_indices[206], v_indices[207], v_indices[208], v_indices[209]
   );
 
-  histogramPrefixSumKernel(&histogramPtr, unsortedTriplePtr1, thread);
+  histogramPrefixSumKernel(&histogramPtr, unsortedTriplePtr1, thread, global_id);
 
   var sortedTriplePtr = array<u32, limbs> (
     v_indices[210], v_indices[211], v_indices[212], v_indices[213], 
@@ -133,7 +133,7 @@ fn MSM_run_call() {
     v_indices[218], v_indices[219], v_indices[220], v_indices[221]
   );
 
-  sortCountsKernel(&sortedTriplePtr, histogramPtr, unsortedTriplePtr1, thread);
+  sortCountsKernel(&sortedTriplePtr, histogramPtr, unsortedTriplePtr1, thread, global_id);
 
   var bucketsPtr = array<vec4<u32>, 12> (
     vec4<u32>(v_indices[222], v_indices[223], v_indices[224], v_indices[225]),
@@ -156,7 +156,7 @@ fn MSM_run_call() {
     v_indices[278], v_indices[279], v_indices[280], v_indices[281]
   );
 
-  computeBucketSums(&bucketsPtr, pointsPtr, sortedTriplePtr, pointIndexesPtr, atomicsPtr, thread);
+  computeBucketSums(&bucketsPtr, pointsPtr, sortedTriplePtr, pointIndexesPtr, atomicsPtr, thread, global_id);
 
   for(var i = 0; i < 48; i++) {
     v_indices[i] = memory.data[i];

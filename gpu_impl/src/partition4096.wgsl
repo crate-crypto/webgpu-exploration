@@ -478,7 +478,7 @@ fn partitionPagesToPoints(block: u32, pointsPtr: ptr<function, array<u32, limbs>
 }
 
 fn partition4096Kernel(pointsPtr: ptr<function, array<u32, limbs>>, unsortedTriplePtr: array<vec4<u32>, limbs>, scratchPtr: ptr<function, array<u32, limbs>>, prefixSumSizesPtr: array<u32, limbs>,
-                        sizesPtr: array<u32, limbs>, pagesPtr: array<u32, limbs>, atomicsPtr: array<u32, limbs>, points: u32, thread: Thread) {
+                        sizesPtr: array<u32, limbs>, pagesPtr: array<u32, limbs>, atomicsPtr: array<u32, limbs>, points: u32, thread: Thread, global_id: vec3u) {
   var unsortedCounts: array<vec4<u32>, limbs> = unsortedTriplePtr;
   var unsortedTriplePtr_copy = unsortedTriplePtr;
   var unsortedIndexes: array<vec4<u32>, limbs>;

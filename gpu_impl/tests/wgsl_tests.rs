@@ -1072,7 +1072,7 @@ use cudatowgsl::*;
 	#[test]
 	fn sortCountsKernel_test() {
 		let input = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-		let expected = vec![1, 2, 3, 0, 5, 6, 7, 8, 9, 10, 11, 12];
+		let expected = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 		let shared = vec![1; 300];
 		
 		let mut bindings: Bindings = Bindings::initialize_two(input, shared);
