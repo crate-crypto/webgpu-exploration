@@ -1,5 +1,10 @@
 use plotters::prelude::*;
 
+/// function for building a plot from given points
+/// input data:
+/// points1, points2 - point for building a plot
+/// output data:
+/// result of building a plot
 pub fn build_plot(points1: &[f32], points2: &[f32]) -> Result<(), Box<dyn std::error::Error>> {
   let root = BitMapBackend::new("column_chart.png", (800, 600)).into_drawing_area();
   root.fill(&WHITE)?;

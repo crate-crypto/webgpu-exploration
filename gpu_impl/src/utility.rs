@@ -39,6 +39,11 @@ pub fn u32_as_slice_u64(input: &[u32]) -> &[u64] {
   unsafe { std::slice::from_raw_parts(input.as_ptr() as *const u64, length) }
 }
 
+/// function for converting u32 slice into a u64 slice
+/// input value:
+/// input - u32 slice
+/// output value:
+/// u64 slice
 pub fn u32_as_mut_slice_u64(input: &mut [u32]) -> &mut [u64] {
   const size_u64: usize = mem::size_of::<u64>();
   const size_u32: usize = mem::size_of::<u32>();
@@ -50,6 +55,11 @@ pub fn u32_as_mut_slice_u64(input: &mut [u32]) -> &mut [u64] {
   unsafe { std::slice::from_raw_parts_mut(input.as_mut_ptr() as *mut u64, length) }
 }
 
+/// function for converting u8 slice into a u32 slice
+/// input value:
+/// input - u8 slice
+/// output value:
+/// u32 slice
 pub fn u8_as_mut_slice_u32(input: &mut [u8]) -> &mut [u32] {
   const size_u32: usize = mem::size_of::<u32>();
   const size_u8: usize = mem::size_of::<u8>();
@@ -63,6 +73,11 @@ pub fn u8_as_mut_slice_u32(input: &mut [u8]) -> &mut [u32] {
   unsafe { std::slice::from_raw_parts_mut(input.as_mut_ptr() as *mut u32, length) }
 }
 
+/// function for converting u8 slice into a u64 slice
+/// input value:
+/// input - u8 slice
+/// output value:
+/// u64 slice
 pub fn u8_as_slice_u32(input: &[u8]) -> &[u32] {
   const size_u32: usize = mem::size_of::<u32>();
   const size_u8: usize = mem::size_of::<u8>();
@@ -76,6 +91,11 @@ pub fn u8_as_slice_u32(input: &[u8]) -> &[u32] {
   unsafe { std::slice::from_raw_parts(input.as_ptr() as *const u32, length) }
 }
 
+/// function for converting u32 slice into a u8 slice
+/// input value:
+/// input - u32 slice
+/// output value:
+/// u8 slice
 pub fn u32_as_mut_slice_u8(input: &mut [u32]) -> &mut [u8] {
   const size_u32: usize = mem::size_of::<u32>();
   const size_u8: usize = mem::size_of::<u8>();

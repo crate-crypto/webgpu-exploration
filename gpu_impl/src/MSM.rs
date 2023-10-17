@@ -27,6 +27,13 @@ pub fn advanceFields(results: &[u32], fieldCount: u32) -> &[u32] {
   &results[(48 * fieldCount) as usize..]
 }
 
+/// function for parsing points values from file
+/// input values: 
+/// pointsPtr - pointer to store points
+/// count - number of points
+/// path - path to file
+/// output value:
+/// result of parsing values from file(-1 - error, 0 - ok)
 pub fn MSMReadHexPoints(mut pointsPtr: &mut [u8], count: u32, path: PathBuf) -> i32 {
   let mut f = File::open(path).expect("Unable to open points.hex file");
 
@@ -47,6 +54,13 @@ pub fn MSMReadHexPoints(mut pointsPtr: &mut [u8], count: u32, path: PathBuf) -> 
   return 0;
 }
 
+/// function for parsing scalars values from file
+/// input values: 
+/// scalarsPtr - pointer to store scalars
+/// count - number of scalars
+/// path - path to file
+/// output value:
+/// result of parsing values from file(-1 - error, 0 - ok)
 pub fn MSMReadHexScalars(mut scalarsPtr: &mut [u8], count: u32, path: PathBuf) -> i32 {
   let mut f = File::open(path).expect("Unable to open points.hex file");
 
@@ -683,197 +697,6 @@ impl MSMContext {
         self.writeComplete = false;
       }
 
-      // input[0] = points/256;
-      // input[1] = 256;
-      // input[2] = 8928;
-      // input[3] = 1;
-      // for i in 4..16 {
-      //   input[i] = self.ml.processedScalars[i - 4];
-      // }
-      // for i in 16..28 {
-      //   input[i] = self.ml.scalars[i - 16];
-      // }
-      
-      // input[28] = points;
-
-      // let mut bindings: Bindings = Bindings::initialize_two(input.clone(), shared.clone());
-
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "processSignedDigitsKernel_call", 2);
-      // shared = pollster::block_on(gpu.run(&bc)).unwrap();
-
-      // // shared = pollster::block_on(run(&mut bindings, "processSignedDigitsKernel_call", 2)); // processSignedDigitsKernel<<<points/256, 256, 8928, runStream>>>(ml.processedScalars, ml.scalars, points);
-
-      // input[0] = self.smCount;
-      // input[1] = 256;
-      // input[2] = 0;
-      // input[3] = 1;
-      // for i in 0..12 {
-      //   input[(i << 1) + 4] = self.ml.counters[i] as u32; // low 32 bits
-      //   input[(i << 1) + 5] = (self.ml.counters[i] >> 32) as u32; // high 32 bits
-      // }
-      // for i in 0..12 {
-      //   input[i + 28] = self.ml.sizes[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 40] = self.ml.atomics[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 52] = self.ml.histogram[i];
-      // }
-
-      // bindings = Bindings::initialize_one(input.clone());
-
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "initializeCountersSizesAtomicsHistogramKernel_call", 1);
-      // let res = pollster::block_on(gpu.run(&bc)).unwrap();
-
-      // //let res = pollster::block_on(run(&mut bindings, "initializeCountersSizesAtomicsHistogramKernel_call", 1)); // initializeCountersSizesAtomicsHistogramKernel<<<smCount, 256, 0, runStream>>>(ml.counters, ml.sizes, ml.atomics, ml.histogram);
-      
-      // for i in 0..12 {
-      //   self.ml.counters[i] = (res[i] as u64) << 32 | (res[i + 12] as u64);
-      // }
-      // self.ml.sizes = res.iter().cloned().skip(24).take(12).collect::<Vec<_>>();
-      // self.ml.atomics = res.iter().cloned().skip(36).take(12).collect::<Vec<_>>();
-      // self.ml.histogram = res.iter().cloned().skip(48).take(12).collect::<Vec<_>>();
-      
-      // input[0] = self.smCount;
-      // input[1] = 1024;
-      // input[2] = 64*1024;
-      // input[3] = 1;
-      // for i in 0..12 {
-      //   input[i + 4] = self.ml.pages[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 16] = self.ml.sizes[i];
-      // }
-      // for i in 0..12 {
-      //   input[(i << 1) + 28] = self.ml.counters[i] as u32; // low 32 bits
-      //   input[(i << 1) + 29] = (self.ml.counters[i] >> 32) as u32; // high 32 bits
-      // }
-      // for i in 0..12 {
-      //   input[i + 52] = self.ml.processedScalars[i];
-      // }
-      // input[64] = points;
-
-      // bindings = Bindings::initialize_two(input.clone(), shared.clone());
-    
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "partition1024Kernel_call", 2);
-      // shared = pollster::block_on(gpu.run(&bc)).unwrap();
-      
-      // //shared = pollster::block_on(run(&mut bindings, "partition1024Kernel_call", 2)); // CUDA_CHECK(cudaLaunchCooperativeKernel((const void*)partition1024Kernel, dim3(smCount), dim3(1024), partition1024Args, 64*1024, runStream));
-
-      // input[0] = 11;
-      // input[1] = 1024;
-      // input[2] = 0;
-      // input[3] = 1;
-      // for i in 0..12 {
-      //   input[i + 4] = self.ml.pages[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 16] = self.ml.prefixSumSizes[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 28] = self.ml.sizes[i];
-      // }
-      // for i in 0..12 {
-      //   input[(i << 1) + 40] = self.ml.counters[i] as u32; // low 32 bits
-      //   input[(i << 1) + 41] = (self.ml.counters[i] >> 32) as u32; // high 32 bits
-      // }
-      // for i in 0..12 {
-      //   input[i + 64] = self.ml.atomics[i];
-      // }
-
-      // bindings = Bindings::initialize_two(input.clone(), shared.clone());
-
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "sizesPrefixSumKernel_call", 2);
-      // let res = pollster::block_on(gpu.run(&bc)).unwrap();
-
-      // //let res = pollster::block_on(run(&mut bindings, "sizesPrefixSumKernel_call", 2)); // CUDA_CHECK(cudaLaunchCooperativeKernel((const void*)sizesPrefixSumKernel, dim3(11), dim3(1024), sizesPrefixSumArgs, 0, runStream));
-      // self.ml.prefixSumSizes = res.iter().cloned().take(12).collect::<Vec<_>>();
-      // self.ml.sizes = res.iter().cloned().skip(12).take(12).collect::<Vec<_>>();
-      // shared = res.iter().cloned().skip(24).take(300).collect::<Vec<_>>();
-
-      // input[0] = self.smCount;
-      // input[1] = 1024;
-      // input[2] = 64*1024;
-      // input[3] = 1;
-
-      // for i in 0..12 {
-      //   input[i + 4] = self.ml.points[i];
-      // }
-      // for i in 0..48 {
-      //   input[i + 16] = self.ml.unsortedTriple[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 64] = self.ml.scratch[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 76] = self.ml.prefixSumSizes[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 88] = self.ml.sizes[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 100] = self.ml.pages[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 112] = self.ml.atomics[i];
-      // }
-      // input[124] = points;
-
-      // bindings = Bindings::initialize_two(input.clone(), shared.clone());
-
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "partition4096Kernel_call", 2);
-      // let res = pollster::block_on(gpu.run(&bc)).unwrap();
-
-      // //let res = pollster::block_on(run(&mut bindings, "partition4096Kernel_call", 2)); //partition4096Kernel<<<smCount, 1024, 64*1024, runStream>>>(ml.points, ml.unsortedTriple, ml.scratch, ml.prefixSumSizes, ml.sizes, ml.pages, ml.atomics, points);
-      // self.ml.points = res.iter().cloned().take(12).collect::<Vec<_>>();
-      // self.ml.scratch = res.iter().cloned().skip(12).take(12).collect::<Vec<_>>();
-      // shared = res.iter().cloned().skip(24).take(300).collect::<Vec<_>>();
-
-      // input[0] = self.smCount;
-      // input[1] = 1024;
-      // input[2] = 0;
-      // input[3] = 1;
-
-      // for i in 0..12 {
-      //   input[i + 4] = self.ml.histogram[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 16] = self.ml.unsortedTriple[i];
-      // }
-
-      // bindings = Bindings::initialize_one(input.clone());
-
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "histogramPrefixSumKernel_call", 1);
-      // let res = pollster::block_on(gpu.run(&bc)).unwrap();
-
-      // //let res = pollster::block_on(run(&mut bindings, "histogramPrefixSumKernel_call", 1)); //histogramPrefixSumKernel<<<smCount, 1024, 0, runStream>>>(ml.histogram, ml.unsortedTriple);
-
-      // self.ml.histogram = res.iter().cloned().take(12).collect::<Vec<_>>();
-
-      // input[0] = self.smCount;
-      // input[1] = 1024;
-      // input[2] = 96*1024;
-      // input[3] = 1;
-      // for i in 0..12 {
-      //   input[i + 4] = self.ml.sortedTriple[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 16] = self.ml.histogram[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 28] = self.ml.unsortedTriple[i];
-      // }
-
-      // bindings = Bindings::initialize_two(input.clone(), shared.clone());
-
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "sortCountsKernel_call", 2);
-      // let res = pollster::block_on(gpu.run(&bc)).unwrap();
-
-      // //let res = pollster::block_on(run(&mut bindings, "sortCountsKernel_call", 2)); //sortCountsKernel<<<smCount, 1024, 96*1024, runStream>>>(ml.sortedTriple, ml.histogram, ml.unsortedTriple);
-      // self.ml.sortedTriple = res.iter().cloned().take(12).collect::<Vec<_>>();
-      // shared = res.iter().cloned().skip(12).take(300).collect::<Vec<_>>();
-
       if batch!=batches {
         self.planningComplete = true;
       }
@@ -881,53 +704,6 @@ impl MSMContext {
         self.lastRoundPlanningComplete = true
       }
 
-      // input[0] = self.smCount;
-      // input[1] = 384;
-      // input[2] = 96*1024;
-      // input[3] = 1;
-
-      // for i in 0..48 {
-      //   input[i + 4] = self.ml.buckets[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 52] = self.gpuPointsMemory[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 64] = self.ml.sortedTriple[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 76] = self.ml.points[i];
-      // }
-      // for i in 0..12 {
-      //   input[i + 88] = self.ml.atomics[i];
-      // }
-
-      // bindings = Bindings::initialize_two(input.clone(), shared.clone());
-
-      // let bc = BufCoder::initialize(&gpu, &mut bindings, "computeBucketSums_call", 2);
-      // let res = pollster::block_on(gpu.run(&bc)).unwrap();
-
-      // //let res = pollster::block_on(run(&mut bindings, "computeBucketSums_call", 2)); //computeBucketSums<<<smCount, 384, 96*1024, runStream>>>(ml.buckets, gpuPointsMemory, ml.sortedTriple, ml.points, ml.atomics);
-      // self.ml.buckets = res.iter().cloned().take(48).collect::<Vec<_>>();
-      // shared = res.iter().cloned().skip(48).take(300).collect::<Vec<_>>();
-
-      // // input[0] = self.smCount;
-      // // input[1] = 256;
-      // // input[2] = 256*96 + 1536;
-      // // input[3] = 1;
-
-      // // for i in 0..48 {
-      // //   input[i + 4] = nextResultsPtr[i];
-      // // }
-      // // for i in 0..48 {
-      // //   input[i + 52] = self.ml.buckets[i];
-      // // }
-
-      // // bindings = Bindings::initialize_two(input.clone(), shared.clone());
-
-      // //let res = pollster::block_on(run(&mut bindings, "reduceBuckets_call", 2)); //reduceBuckets<<<smCount, 256, 256*96 + 1536, runStream>>>(nextResultsPtr, ml.buckets);
-      // // nextResultsPtr = res.iter().cloned().take(48).collect::<Vec<_>>();
-      // // shared = res.iter().cloned().skip(48).take(300).collect::<Vec<_>>();
 
 
       res = pollster::block_on(gpu.run(&bc)).unwrap();
