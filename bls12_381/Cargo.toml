@@ -1,0 +1,33 @@
+[package]
+name = "fp"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bytemuck = "1.13.1"
+pollster = "0.2"
+rand_core = "0.6.4"
+wgpu = { version = "0.16.1"}
+env_logger = "0.10.0"
+bls12_381 = "0.8.0"
+
+[dev-dependencies]
+criterion = { version = "0.4", features = ["html_reports"] }
+
+[[bench]]
+name = "Fp"
+harness = false
+
+[[bench]]
+name = "Fp2"
+harness = false
+
+[[bench]]
+name = "Fp6"
+harness = false
+
+[[bench]]
+name = "G1"
+harness = false

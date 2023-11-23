@@ -103,6 +103,13 @@ const R3 = Fp(array<u32,12>(
 // '0xfffcfffd'
 const INV: u32 = 0xfffcfffdu; 
 
+fn Fp_one() -> Fp {
+  return R; 
+}
+
+fn Fp_zero() -> Fp {
+  return Fp(array<u32,12>(0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u));
+}
 
 // multiply operation
 fn multiply(a: u32, b: u32) -> array<u32, 2> {
@@ -153,9 +160,9 @@ fn sum(a: u32, b: u32) -> array<u32,2> {
 
 // a + (b * c ) + carry 
 // returns new result and new carry over
-fn mac(a: u32, b: u32, c: u32, carry: u32) -> array<u32,2> {
+fn mac(a: u32, b: u32, c: u32, cm : u32) -> array<u32,2> {
     let bc_multiply = multiply(b, c);
-    let bc_total = sum(bc_multiply[0], carry);
+    let bc_total = sum(bc_multiply[0], cm);
 
 
     let a_bc_sum = sum(a, bc_total[0]);
@@ -221,13 +228,6 @@ fn Fp_add(lhs: Fp, rhs: Fp) -> Fp {
     return subtract_p(final_fp);
 }
 
-// returns a.zip(b).fold(0,|acc, (a_i,b_i| acc + a_i * b_i )
-fn Fp_sum_of_products() {
-    for (var j = 0u; j < 12u; j++) {
-        for (var i = j; i < 12u ; i++) {
-        }
-    }
-}
 
 fn Fp_neg(data: Fp) -> Fp {
     let r1_a = sbb(MODULUS[0], data.value[0], 0u);
@@ -1066,6 +1066,50 @@ fn Fp_mul(lhs: Fp, rhs: Fp) -> Fp {
     );
 }
 
+fn Fp_lexicographically_largest(fp: Fp) -> u32{
+  let tmp = montgomery_reduce(
+    fp.value[0],
+    fp.value[1],
+    fp.value[2],
+    fp.value[3],
+    fp.value[4],
+    fp.value[5],
+    fp.value[6],
+    fp.value[7],
+    fp.value[8],
+    fp.value[9],
+    fp.value[10],
+    fp.value[11],
+    0u, 0u, 0u, 0u, 0u, 0u,
+    0u, 0u, 0u, 0u, 0u, 0u
+);
+
+let a0 = sbb(tmp.value[0], 0xffffd556u, 0u);
+let a1 = sbb(tmp.value[1], 0xdcff7fffu,a0[1]);
+let a2 = sbb(tmp.value[2], 0x58a9ffffu,a1[1]);
+let a3 = sbb(tmp.value[3], 0xf55ffffu,a2[1]);
+let a4 = sbb(tmp.value[4], 0x7b587b12u,a3[1]);
+let a5 = sbb(tmp.value[5], 0xb3986950u,a4[1]);
+let a6 = sbb(tmp.value[6], 0x79c2895fu,a5[1]);
+let a7 = sbb(tmp.value[7], 0xb23ba5c2u,a6[1]);
+let a8 = sbb(tmp.value[8], 0x21a5d66bu,a7[1]);
+let a9 = sbb(tmp.value[9], 0x258dd3dbu,a8[1]);
+let a10 = sbb(tmp.value[10], 0x1cbff34du,a9[1]);
+let a11 = sbb(tmp.value[11], 0xd0088f5u,a10[1]);
+
+// only a11[1] is important, as if the element
+// was smaller it will produce a borrow value 
+// 0xffff_ffff, otherwise it will be zero
+// we can return u32 
+
+if (a11[1] & 1u) == 1u {
+    return 0u;
+  }else {
+    return 1u;
+  }
+
+}
+
 // local invocation is like 0 to x for every workgroup
 @compute
 @workgroup_size(32,1,1)
@@ -1231,5 +1275,7 @@ fn fp_multiply_test() {
     v_indices[10] = added_value.value[10];
     v_indices[11] = added_value.value[11];
 }
+
+
 
 

@@ -36,7 +36,7 @@ pub async fn run(source_data: &Vec<u32>, entry_point: &str) -> Vec<u32> {
 
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Shader"),
-        source: wgpu::ShaderSource::Wgsl(include_str!("Fp.wgsl").into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("Fp_all.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -64,7 +64,7 @@ pub async fn run(source_data: &Vec<u32>, entry_point: &str) -> Vec<u32> {
         label: Some("compute pipeline"),
         layout: Some(&layout),
         module: &shader,
-        entry_point: entry_point,
+        entry_point: &entry_point,
     });
 
     let readback_buffer = device.create_buffer(&wgpu::BufferDescriptor {

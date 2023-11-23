@@ -1,21 +1,16 @@
 import functools
 p = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab
 
-a = functools.reduce(lambda a, b: (a << 64)+b,
-                     [
-    3051072770903393768,
-    11629791499313985915,
-    8689276483349490602,
-    693720623975851170,
-    6415838286187876640,
-    3795771640209342192,
-    15133964633486399704,
-    8125486586422361559,
-    8992179073402572659,
-    16734090500167908874,
-    11657655863148526223,
-    2124775885383657,
+a = functools.reduce(lambda a, b: (a << 64)+b
+                     ,[
+        0x0397_a383_2017_0cd4,
+        0x734c_1b2c_9e76_1d30,
+        0x5ed2_55ad_9a48_beb5,
+        0x095a_3c6b_22a7_fcfc,
+        0x2294_ce75_d4e2_6a27,
+        0x1333_8bd8_7001_1ebb,
 ][::-1], 0)
+# print(a)
 
 
 k = functools.reduce(lambda a, b: (a << 32)+b,
@@ -65,7 +60,9 @@ b = functools.reduce(lambda a, b: (a << 64)+b,
     0x0652_e893_26e5_7dc0
 ][::-1], 0)
 
-print(d * b)
+print("kaisae")
+print(a)
+print(b)
 c = functools.reduce(lambda a, b: (a << 64)+b,
                      [
     0xf96e_f3d7_11ab_5355,
